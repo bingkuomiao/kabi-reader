@@ -231,22 +231,22 @@
 <div class="bookChapterList modal">
     <div class="modal-content">
         <span class="close" data-action="hide" data-target=".bookChapterList">&times;</span>
-        <div class="chapter-title-container"> 
+        <div class="modal-title-container">
             <h1 id="chapterTitle">书名</h1> 
         </div>
-        <div id="chapterNameList" class="chapterNameList">
-            <div class="chapter-columns-container">
-                <div class="chapter-column" id="chapterColumn1"></div>
-                <div class="chapter-column" id="chapterColumn2"></div>
+        <div id="chapterNameList" class="modal-list">
+            <div class="modal-columns-container">
+                <div class="modal-column" id="chapterColumn1"></div>
+                <div class="modal-column" id="chapterColumn2"></div>
             </div>
         </div>
-        <div class="bookChapterList_menu">
-            <div class="bookChapterList_menu_left">
+        <div class="modal-menu">
+            <div class="modal-menu-left">
                 <button data-action="getChapterList" data-args="1,showChapterListNum,true">刷新</button>
                 <button data-action="jumpChapterList" data-args="-1">上一页</button>
             </div>
 
-            <div class="bookChapterList_menu_right">
+            <div class="modal-menu-right">
                 <button data-action="jumpChapterList" data-args="1">下一页</button>
                <!-- <button onclick="jumpChapterList()">转向</button>
                 <input id="jumpChapterListTo" type="number" min="1">--->
@@ -262,20 +262,24 @@
 <div class="bookSourceList modal">
     <div class="modal-content">
         <span class="close" data-action="hide" data-target=".bookSourceList">&times;</span>
-        <div class="source-title-container"> 
+        <div class="modal-title-container">
             <h1 id="sourceTitle">书名</h1> 
             <img id="sourcing" class="source-loading" src="img/loading.gif"> 
         </div>
-        <div id="sourceNameList" class="sourceNameList">
-            <div class="source-columns-container">
-                <div class="source-column" id="sourceColumn1"></div>
-                <div class="source-column" id="sourceColumn2"></div>
+        <div id="sourceNameList" class="modal-list">
+            <div class="modal-columns-container">
+                <div class="modal-column" id="sourceColumn1"></div>
+                <div class="modal-column" id="sourceColumn2"></div>
             </div>
         </div>
-        <div class="bookSourceList_menu">
-            <div class="source-columns-container">
-                <button class="bookSourceList_menu_left" data-action="getSourceList" data-args="0,lastSourceIndex,showSourceListNum,true">更多书源</button>
-                <button class="bookSourceList_menu_right" data-action="deleteBookItem">移除书籍</button>
+        <div class="modal-menu">
+            <div class="modal-menu-left">
+                <button data-action="getSourceList" data-args="0,lastSourceIndex,showSourceListNum,true">更多书源</button>
+                <button data-action="prevSourcePage">上一页</button>
+            </div>
+            <div class="modal-menu-right">
+                <button data-action="nextSourcePage">下一页</button>
+                <button data-action="deleteBookItem">移除书籍</button>
             </div>
         </div>
     </div>

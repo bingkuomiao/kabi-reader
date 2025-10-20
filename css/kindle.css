@@ -426,19 +426,12 @@ label {
     padding: 20px;
 }
 /*************书名标题样式*********************/
-.source-title-container {
-    display: block; /* 改为 block */
-    text-align: center; /* 文字居中 */
-    padding-right: 60px; /* 为关闭按钮留出空间，确保各模态框的标题区域不会被关闭按钮遮挡 */
-    position: relative;
-}
-
 #sourceTitle {
     display: inline-block;
     font-size: 45px;
     text-align: center;
     border-bottom: none;
-    margin: 25px 0 0 68px;
+    margin: 15px 0 10px 68px; /* 增加底部外边距从0到10px */
 }
 
 .source-loading {
@@ -446,161 +439,6 @@ label {
     margin-left: 15px;
     position: relative;
 }
-
-/* 针对书源模态框的特殊调整 */
-.bookSourceList .close {
-    top: 10px;
-    right: 20px;
-}
-/*************书源项区样式*********************/
-.sourceNameList {
-    width: 100%;
-    overflow: hidden; /* 隐藏溢出 */
-    margin: 5px 0;
-    padding-top: 15px;
-    border-top: 4px solid #000;
-}
-
-.source-columns-container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* 清除浮动 */
-}
-
-.source-column {
-    width: 49%; /* 两列宽度 */
-    float: left; /* 使用浮动布局 */
-    height: 100%;
-    overflow: hidden;
-}
-
-.source-column:first-child {
-    margin-right: 2%; /* 第一列右边距 */
-}
-
-.source-column button {
-    width: 100%;
-    text-align: left;
-    border: none;
-    background: #e0e0e0; /* 浅灰色背景 - 未加载 */
-    font-size: 43px;
-    color: #444; /* 深灰色文字 - 未加载 */
-    cursor: pointer;
-    padding: 3px 5px;
-    margin: 5px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    display: block;
-    line-height: 1.3;
-    height: auto;
-    min-height: 30px;
-    border: 1px solid #ddd;
-    transition: all 0.3s ease;
-}
-
-/*************书源按钮状态样式*********************/
-/* 已加载书源样式 - 黑底白字 */
-.preloaded-source {
-    background-color: #444 !important; /* 深灰色背景 */
-    color: #FFF !important; /* 白色文字 */
-    border: 1px solid #000 !important;
-}
-
-/* 当前书源样式 - 黑底白字加粗 */
-.currentSource {
-    background-color: #000 !important; /* 黑色背景 */
-    color: #FFF !important; /* 白色文字 */
-    border: 1px solid #000 !important;
-    font-weight: bold !important;
-}
-
-/* 已加载的当前书源样式 */
-.currentSource.preloaded-source {
-    background-color: #000 !important;
-    color: #FFF !important;
-    border: 1px solid #000 !important;
-    font-weight: bold !important;
-}
-
-/*************悬停效果*********************/
-/* 未加载书源悬停效果 */
-.source-column button:hover {
-    background-color: #000 !important;
-    color: #FFF !important;
-}
-
-/* 已加载书源悬停效果 */
-.preloaded-source:hover {
-    background-color: #000 !important;
-    color: #FFF !important;
-    font-weight: bold !important;
-}
-
-/* 当前书源悬停效果 */
-.currentSource:hover {
-    background-color: #000 !important;
-    color: #FFF !important;
-    font-weight: bold !important;
-}
-
-/*************激活状态（点击时）*********************/
-.source-column button:active,
-.preloaded-source:active,
-.currentSource:active {
-    background-color: #000 !important;
-    color: #FFF !important;
-    font-weight: bold !important;
-    transform: translateY(1px);
-}
-
-/*************书源分页控件样式*********************/
-.bookSourceList_menu {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-top: 4px solid #000;
-    clear: both; /* 清除浮动 */
-}
-
-.bookSourceList_menu_left {
-    float: left;
-}
-
-.bookSourceList_menu_right {
-    float: right;
-}
-
-.bookSourceList_menu button {
-    font-size: 43px; /* 保持大字体 */
-    padding: 15px 15px; /*内边距 */
-    border: none;
-    background: #FFF;
-    color: #000;
-    height: 70px; /* 按比例扩大高度 */
-    line-height: 1; /* 调整行高 */
-    min-width: 120px; /* 按比例扩大最小宽度 */
-    margin: 0 20px; /* 按钮内部额外间距 */
-}
-
-.bookSourceList_menu button:hover {
-    background: #000;
-    color: #FFF;
-    font-weight: bold;
-}
-
-.bookSourceList_menu button:active {
-    background: #000;
-    color: #FFF;
-}
-
-.bookSourceList_menu input {
-    font-size: 43px; /* 保持大字体 */
-    height: 50px; /* 按比例扩大高度 */
-    width: 90px; /* 按比例扩大宽度 */
-    text-align: center;
-    margin: 0 30px; /* 输入框额外间距 */
-}
-
 /*************底部菜单设置按钮页面样式区*********************/
 .config-content {
     background-color: #FFF;
@@ -713,7 +551,7 @@ label {
 /* 设置模态框的确定按钮 */
 .config-content .button-group {
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-align: center;
     position: relative;
     clear: both; /* 清除浮动 */
@@ -728,191 +566,18 @@ label {
     padding: 20px;
 }
 /*************书名标题样式*********************/
-.chapter-title-container {
-    display: block; /* 改为 block */
-    text-align: center; /* 文字居中 */
-    padding-right: 60px; /* 为关闭按钮留出空间 */
-    position: relative;
-}
-
 #chapterTitle {
     display: inline-block;
     font-size: 45px;
     text-align: center;
     border-bottom: none;
-    margin: 25px 0 0 68px;
+    margin: 15px 0 10px 68px; /* 增加底部外边距从0到10px */
 }
-/*************目录项区样式*********************/
-.chapterNameList {
-    width: 100%;
-    overflow: hidden; /* 隐藏溢出 */
-    margin: 5px 0;
-    padding-top: 15px;
-    border-top: 4px solid #000;
-}
-
-.chapter-columns-container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* 清除浮动 */
-}
-
-.chapter-column {
-    width: 49%; /* 两列宽度 */
-    float: left; /* 使用浮动布局 */
-    height: 100%;
-    overflow: hidden;
-}
-
-.chapter-column:first-child {
-    margin-right: 2%; /* 第一列右边距 */
-}
-
-.chapter-column button {
-    width: 100%;
-    text-align: left;
-    border: none;
-    background: #e0e0e0; /* 浅灰色背景 - 未加载 */
-    font-size: 43px;
-    color: #444; /* 深灰色文字 - 未加载 */
-    cursor: pointer;
-    padding: 3px 5px;
-    margin: 5px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    display: block;
-    line-height: 1.3;
-    height: auto;
-    min-height: 30px;
-    border: 1px solid #ddd;
-    transition: all 0.3s ease;
-}
-
-/*************章节按钮状态样式*********************/
-/* 已加载章节样式 - 黑底白字 */
-.preloaded-chapter {
-    background-color: #444 !important; /* 深灰色背景 */
-    color: #FFF !important; /* 白色文字 */
-    border: 1px solid #000 !important;
-}
-
-/* 当前章节样式 - 黑底白字加粗 */
-.currentChapter {
-    background-color: #000 !important; /* 黑色背景 */
-    color: #FFF !important; /* 白色文字 */
-    border: 1px solid #000 !important;
-    font-weight: bold !important;
-}
-
-/* 已加载的当前章节样式 */
-.currentChapter.preloaded-chapter {
-    background-color: #000 !important;
-    color: #FFF !important;
-    border: 1px solid #000 !important;
-    font-weight: bold !important;
-}
-
-/*************悬停效果*********************/
-/* 未加载章节悬停效果 */
-.chapter-column button:hover {
-    background-color: #000 !important;
-    color: #FFF !important;
-}
-
-/* 已加载章节悬停效果 */
-.preloaded-chapter:hover {
-    background-color: #000 !important;
-    color: #FFF !important;
-    font-weight: bold !important;
-}
-
-/* 当前章节悬停效果 */
-.currentChapter:hover {
-    background-color: #000 !important;
-    color: #FFF !important;
-    font-weight: bold !important;
-}
-
-/*************激活状态（点击时）*********************/
-.chapter-column button:active,
-.preloaded-chapter:active,
-.currentChapter:active {
-    background-color: #000 !important;
-    color: #FFF !important;
-    font-weight: bold !important;
-    transform: translateY(1px);
-}
-
 /*************章节分页控件样式*********************/
-.bookChapterList_menu {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 15px;
-    border-top: 4px solid #000;
-    clear: both; /* 清除浮动 */
-}
-
-.bookChapterList_menu_left {
-    float: left;
-}
-
-.bookChapterList_menu_right {
-    float: right;
-}
-
-.bookChapterList_menu button {
-    font-size: 43px; /* 保持大字体 */
-    padding: 15px 15px; /*内边距 */
-    border: none;
-    background: #FFF;
-    color: #000;
-    height: 70px; /* 按比例扩大高度 */
-    line-height: 1; /* 调整行高 */
-    min-width: 120px; /* 按比例扩大最小宽度 */
-    margin: 0 20px; /* 按钮内部额外间距 */
-}
-
-.bookChapterList_menu button:hover {
-    background: #000;
-    color: #FFF;
-    font-weight: bold;
-}
-
-.bookChapterList_menu button:active {
-    background: #000;
-    color: #FFF;
-}
-
-.bookChapterList_menu input {
-    font-size: 43px; /* 保持大字体 */
-    height: 50px; /* 按比例扩大高度 */
-    width: 90px; /* 按比例扩大宽度 */
-    text-align: center;
-    margin: 0 30px; /* 输入框额外间距 */
-}
-
 /* 页码跳转样式 */
 #jumpChapterListTo {
     height: 45px; /* 按比例调整高度 */
     border: 4px solid #000;
-}
-
-/* 页码显示样式 */
-.bookChapterList_menu .page-info {
-    font-size: 43px;
-
-    color: #000;
-    padding: 0 3px; /* 内边距 */
-    line-height: 70px; /* 与按钮高度对齐 */
-}
-
-.bookChapterList_menu .page-info span {
-    margin: 0 0px;
-}
-
-.bookChapterList_menu .page-separator {
-    margin: 0 3px;
-    color: #000;
 }
 /*************封面懒加载样式 - Kindle兼容版*********************/
 /* 懒加载封面基础样式 */
@@ -925,6 +590,7 @@ label {
     background-color: #ffffff;
 }
 /*************通用样式区*********************/
+/*************模态框通用样式区*********************/
 /* 模态（背景）*/
 .modal {
     display: none; /* 默认隐藏 */
@@ -947,7 +613,7 @@ label {
     max-height: 85%;
     display: block;
     background-color: #FFF;
-    padding: 30px;
+    padding: 20px 30px 15px; /* 调整底部内边距为15px */
     border: 4px solid #000;
     border-radius: 4px;
     z-index: 1101; /* 确保内容在模态框背景之上 */
@@ -960,7 +626,210 @@ label {
     margin: 2px;
 }
 
-/* 通用表单样式 */
+/*************模态框标题样式区*********************/
+.modal-title-container {
+    display: block;
+    text-align: center;
+    padding-right: 60px;
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.modal-title {
+    display: inline-block;
+    font-size: 45px;
+    text-align: center;
+    border-bottom: none;
+    margin: 15px 0 10px 68px;
+}
+/*************模态框内容样式区*********************/
+.modal-list {
+    width: 100%;
+    overflow: hidden;
+    margin: 5px 0;
+    padding-top: 10px;
+    padding-top: 15px; /* 增加顶部内边距从10px到15px */
+    border-top: 4px solid #000;
+}
+
+.modal-columns-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.modal-column {
+    width: 49%;
+    float: left;
+    height: 100%;
+    overflow: hidden;
+}
+
+.modal-column:first-child {
+    margin-right: 2%;
+}
+
+.modal-column button {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: #e0e0e0;
+    font-size: 43px;
+    color: #444;
+    cursor: pointer;
+    padding: 3px 5px;
+    margin: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    line-height: 1.3;
+    height: auto;
+    min-height: 30px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+/* 通用按钮状态样式 */
+.modal-preloaded {
+    background-color: #444 !important;
+    color: #FFF !important;
+    border: 1px solid #000 !important;
+}
+
+.modal-current {
+    background-color: #000 !important;
+    color: #FFF !important;
+    border: 1px solid #000 !important;
+    font-weight: bold !important;
+}
+
+.modal-current.modal-preloaded {
+    background-color: #000 !important;
+    color: #FFF !important;
+    border: 1px solid #000 !important;
+    font-weight: bold !important;
+}
+
+/* 通用悬停效果 */
+.modal-column button:hover {
+    background-color: #000 !important;
+    color: #FFF !important;
+}
+
+.modal-preloaded:hover {
+    background-color: #000 !important;
+    color: #FFF !important;
+    font-weight: bold !important;
+}
+
+.modal-current:hover {
+    background-color: #000 !important;
+    color: #FFF !important;
+    font-weight: bold !important;
+}
+
+/* 通用激活状态 */
+.modal-column button:active,
+.modal-preloaded:active,
+.modal-current:active {
+    background-color: #000 !important;
+    color: #FFF !important;
+    font-weight: bold !important;
+    transform: translateY(1px);
+}
+/*************模态框菜单样式区*********************/
+.modal-menu {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    border-top: 4px solid #000;
+    clear: both;
+}
+
+.modal-menu-left {
+    float: left;
+}
+
+.modal-menu-right {
+    float: right;
+}
+
+.modal-menu button {
+    font-size: 43px;
+    padding: 15px 15px;
+    border: none;
+    background: #FFF;
+    color: #000;
+    height: 70px;
+    line-height: 1;
+    min-width: 120px;
+    margin: 0 20px;
+}
+
+.modal-menu button:hover {
+    background: #000;
+    color: #FFF;
+    font-weight: bold;
+}
+
+.modal-menu button:active {
+    background: #000;
+    color: #FFF;
+}
+
+.modal-menu input {
+    font-size: 43px;
+    height: 50px;
+    width: 90px;
+    text-align: center;
+    margin: 0 30px;
+}
+
+/*************模态框菜单页码样式区*********************/
+.modal-menu .page-info {
+    font-size: 43px;
+    color: #000;
+    padding: 0 1px; /* 减少左右内边距 */
+    line-height: 70px;
+}
+
+.modal-menu .page-info span {
+    margin: 0 0px;
+}
+
+.modal-menu .page-separator {
+    margin: 0 0px; /* 减少分隔符的左右外边距 */
+    color: #000;
+}
+/*************模态框关闭按钮样式区*********************/
+.close {
+    display: flex;
+    color: #000;
+    position: absolute; /* 改为绝对定位 */
+    top: 5px; /* 距离顶部 */
+    right: 15px; /* 距离右侧 */
+    font-size: 85px;
+    margin: 0; /* 移除之前的margin */
+    cursor: pointer;
+    z-index: 1102; /* 确保在最上层 */
+    line-height: 1; /* 确保行高正常 */
+    width: 50px; /* 固定宽度 */
+    height: 50px; /* 固定高度 */
+    align-items: center;
+    justify-content: center;
+    background: #FFF; /* 白色背景确保可见性 */
+}
+
+.close:hover,
+.close:focus {
+    color: #FFF;
+    background-color: #000;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/*************通用表单样式区*********************/
 .form-group {
     width: 100%;
     overflow: hidden;
@@ -1037,31 +906,4 @@ label {
 input {
     height: 45px;
     font-size: 28px;
-}
-
-/* 关闭按钮 */
-.close {
-    display: flex;
-    color: #000;
-    position: absolute; /* 改为绝对定位 */
-    top: 5px; /* 距离顶部 */
-    right: 15px; /* 距离右侧 */
-    font-size: 85px;
-    margin: 0; /* 移除之前的margin */
-    cursor: pointer;
-    z-index: 1102; /* 确保在最上层 */
-    line-height: 1; /* 确保行高正常 */
-    width: 50px; /* 固定宽度 */
-    height: 50px; /* 固定高度 */
-    align-items: center;
-    justify-content: center;
-    background: #FFF; /* 白色背景确保可见性 */
-}
-
-.close:hover,
-.close:focus {
-    color: #FFF;
-    background-color: #000;
-    font-weight: bold;
-    text-decoration: none;
 }
