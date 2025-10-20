@@ -11,7 +11,7 @@ window.READER_CONFIG = {
     // 服务器地址
     address: "http://192.200.217.59:4396",
     // 登录用户名（仅server类型需要）
-    username: "jinglei",
+    username: "",
     // 登录密码（仅server类型需要）
     password: "",
     // 加密盐值（预留功能）
@@ -35,5 +35,7 @@ window.READER_CONFIG = {
     // 2: 上下分区域翻页
     // 3: 左上角上一页，其余下一页
     // 4: 右上角上一页，其余下一页
-    currentClickFunNum: 4
+    currentClickFunNum: 4,
+    debugMode: false, 
+    debugLevel: 0
 };
