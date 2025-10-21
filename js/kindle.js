@@ -1,7 +1,6 @@
-
 // 配置 - 从外部配置文件读取
 var config = window.READER_CONFIG || {
-    type: "server",
+    type: "multi",
     address: "",
     username: "",
     password: "",
@@ -33,7 +32,7 @@ var screenWidth = window.screen.width,    // 屏幕宽度
     loadingP = "",                        // 加载等待
     bookSourceMapCache = [],              // 书源列表缓存
     currentSourceUrl = "",                // 当前书源索引
-    lastSourceIndex = 0,                  // 当前书源总长度
+    lastSourceIndex = 0,                  // 当前书源位置
     bookChapterMapCache,                  // 章节列表缓存
     currentChapterIndex = null,           // 当前章节索引
     currentChapterPos = null,             // 当前章节阅读位置
@@ -49,12 +48,12 @@ var screenWidth = window.screen.width,    // 屏幕宽度
     currentAuthor = "",                   // 当前书籍作者
     menusVisible = false;                 // 顶部和底部菜单显示状态
 // 性能优化配置
-var showChapterListNum = 20,             // 目录显示的数量
+var showChapterListNum = 18,             // 目录显示的数量
     showSourceListNum = 10,              // 书源显示的数量
     currentSourcePage = 1,               // 当前书源页码
     totalSourcePages = 1,                // 书源总页数
     sourcePageSize = 10,                 // 每页显示书源数量
-    preloadCount = 14,                    // 最大预加载章节数，显示数目一半
+    preloadCount = 12,                   // 最大预加载章节数，显示数目一半
     preloadedChaptersMapCache = {},      // 预加载缓存对象 - 存储已预加载的章节索引和内容 
     preloadTimer = null,                 // 限制预加载频率和数量
     lastPageTurnDirection = 0,           // 0=管理, 1=向下翻页, -1=向上翻页
@@ -79,9 +78,9 @@ var contentElement = null,
 function url(router, data) {
     if (config.type == "app") {
         router += "?v=" + new Date().getTime() + "&accessToken=" + accessToken;
-    } else if (config.type == "serverNoSecured") {
+    } else if (config.type == "single") {
         router += "?v=" + new Date().getTime();
-    } else if (config.type == "server"){
+    } else if (config.type == "multi"){
         router += "?v=" + new Date().getTime() + "&accessToken=" + accessToken;
     } else {
         alert('服务器类型设置失败！');
@@ -289,7 +288,7 @@ function preloadLog(message, data) {
         }
     }
 }
-// 缓存状态日志（重要信息，级别2）
+// 缓存状态日志（重要信息，级别3）
  function cacheLog(message) {
     if (!config.debugMode) return;
     if (config.debugLevel < 3) return;
@@ -303,58 +302,6 @@ function errorLog(message) {
     if (console && console.error) {
         console.error(message);
     }
-}
-
-// 估算缓存内存使用量
-function estimateCacheMemoryUsage() {
-    var totalSize = 0;
-    for (var index in preloadedChaptersMapCache) {
-        var content = preloadedChaptersMapCache[index];
-        if (typeof content === 'string') {
-            // 估算字符串内存占用（UTF-16，2字节/字符）
-            totalSize += content.length * 2;
-        }
-    }
-    return Math.round(totalSize / 1024); // 转换为KB
-}
-/**
- * 获取缓存状态信息（新增函数，用于调试）
- */
-function getCacheStatus() {
-    var cacheKeys = Object.keys(preloadedChaptersMapCache);
-    var currentIndex = currentChapterIndex || 0;
-    var nearbyChapters = [];
-    var farChapters = [];
-    for (var i = 0; i < cacheKeys.length; i++) {
-        var chapterIndex = parseInt(cacheKeys[i]);
-        var distance = Math.abs(chapterIndex - currentIndex);
-        if (distance <= preloadCount) {
-            nearbyChapters.push(chapterIndex);
-        } else {
-            farChapters.push(chapterIndex);
-        }
-    }
-    nearbyChapters.sort(function(a, b) { return a - b; });
-    farChapters.sort(function(a, b) { return a - b; });
-    return {
-        total: cacheKeys.length,
-        nearby: nearbyChapters,
-        far: farChapters,
-        memoryUsage: estimateCacheMemoryUsage() + 'KB',
-        currentChapter: currentIndex
-    };
-}
-
-// 调试函数：在控制台显示缓存状态
-function debugCacheStatus() {
-    var status = getCacheStatus();
-    console.group('预加载缓存状态');
-    preloadLog('总缓存章节:', status.total);
-    preloadLog('附近章节:', status.nearby);
-    preloadLog('较远章节:', status.far);
-    preloadLog('内存使用:', status.memoryUsage);
-    preloadLog('当前章节:', status.currentChapter);
-    console.groupEnd();
 }
 
 function HttpGet(url, callback) {
@@ -378,7 +325,7 @@ function HttpGet(url, callback) {
         }
     };
     
-    if (config.type == "server") {
+    if (config.type == "multi") {
         xhr.withCredentials = true;
     }
     
@@ -408,7 +355,7 @@ function HttpPost(url, data, callback) {
         }
     };
     
-    if (config.type == "server") {
+    if (config.type == "multi") {
         xhr.withCredentials = true;
     }
     
@@ -465,8 +412,8 @@ function setContentPageInfo() {
 function freshBookCache() {
     // 重置缓存数据
     preloadedChaptersMapCache = {};      // 初始化预加载缓存
-    preloadTimer = null,                 // 限制预加载频率和数量
-    lastPageTurnDirection = 0,           // 0=未知, 1=向下翻页, -1=向上翻页
+    preloadTimer = null;                 // 限制预加载频率和数量
+    lastPageTurnDirection = 0;           // 0=未知, 1=向下翻页, -1=向上翻页
     bookSourceMapCache = [];
     lastSourceIndex = 0;
     sourceColumn1.innerHTML = "";
@@ -484,7 +431,7 @@ function freshBookCache() {
     currentBookUrl = "";
     currentBookName = "";
     currentAuthor = "";
-    lazyLoadedCovers = {},
+    lazyLoadedCovers = {};
     lazyLoadInitialized = false;
     lazyScrollCount = 0;
 }
@@ -562,8 +509,10 @@ function getBookshelf() {
                 bookListContainer.innerHTML = '';
                 bookListContainer.appendChild(fragment);
                 
+                // 立即浏览器全屏
+                enterFullscreen();
                 // 立即初始化懒加载
-                initCoverLazyLoad();  
+                initCoverLazyLoad(); 
                 loadingOver();
             } else {
                 loadingOver();
@@ -854,8 +803,8 @@ function handleChapterListResponse(res, pageNo, startIndex, endIndex, pageSize, 
     loadingOver();
 }
 
+// 创建按钮元素
 function createChapterButton(chapterInfo, index) {
-    // 创建按钮元素
     var button = document.createElement('button');
     
     // 获取章节标题并格式化
@@ -1029,6 +978,7 @@ function handleBookContent(bookStr, targetChapterIndex, bookUrl, lastPage, callb
 
     disposeBookContent(targetChapterIndex, bookStr);
     getBookContentPage(currentChapterIndex, bookUrl, 1, lastPage);
+    // 立即保存阅读进度（章节切换）
     saveReadProcess(targetChapterIndex, bookUrl, true);
     
     // 更新章节缓存
@@ -1043,16 +993,16 @@ function handleBookContent(bookStr, targetChapterIndex, bookUrl, lastPage, callb
     currentChapterContent = bookStr;
     currentChapterIndex = parseInt(targetChapterIndex);
     
-    // === 修改：基于翻页方向的智能预加载 ===
+    // === 基于翻页方向的智能预加载 ===
     preloadLog("章节切换，翻页方向:", lastPageTurnDirection);
     if (lastPageTurnDirection === 1) {
         // 向下翻页：主要预加载后续章节
         preloadLog("向下翻页，侧重预加载后续章节");
-        startPreloadChapters(3, 1);  // 预加载后面1章
+        startPreloadChapters(2, 1);  // 预加载后面1章
     } else if (lastPageTurnDirection === -1) {
         // 向上翻页：主要预加载前序章节
         preloadLog("向上翻页，侧重预加载前序章节");
-        startPreloadChapters(3, -1); // 预加载前面1章
+        startPreloadChapters(2, -1); // 预加载前面1章
     } else {
         preloadLog("未知方向，暂不处理");
         //preloadLog("未知方向，平衡预加载两个方向");
@@ -1177,17 +1127,36 @@ function preloadChaptersBatch(chapters, index) {
     }, index * 200); // 每章间隔200ms
 }
 
+// 估算缓存内存使用量
+function estimateCacheMemoryUsage(chapterIndex, cacheSize) {
+    // 生产环境完全禁用
+    if (!config.debugMode) return;
+    // 只在调试级别足够时输出
+    if (config.debugLevel < 2) return;
+
+    var totalSize = 0;
+    for (var index in preloadedChaptersMapCache) {
+        var content = preloadedChaptersMapCache[index];
+        if (typeof content === 'string') {
+            // 估算字符串内存占用（UTF-16，2字节/字符）
+            totalSize += content.length * 2;
+        }
+    }
+    var cacheMemoryUsage = Math.round(totalSize / 1024); // 转换为KB
+    preloadLog("预加载章节完成: " + chapterIndex + 
+           ", 缓存大小: " + cacheSize + 
+           ", 预估内存: " + cacheMemoryUsage + "KB");
+}
+
 // 处理预加载响应
  function handlePreloadResponse(res, chapterIndex, bookUrl) {
     if (res && res.isSuccess) {
         // 存储预加载的内容
         preloadedChaptersMapCache[chapterIndex] = res.data;
-        // === 新增：缓存状态监控 ===
         var cacheSize = Object.keys(preloadedChaptersMapCache).length;
-        var cacheMemoryUsage = estimateCacheMemoryUsage();
-        preloadLog("预加载章节完成: " + chapterIndex + 
-                   ", 缓存大小: " + cacheSize + 
-                   ", 预估内存: " + cacheMemoryUsage + "KB");
+        // === 缓存状态监控 ===
+        estimateCacheMemoryUsage(chapterIndex, cacheSize);
+
         // 监控缓存大小，超过限制时智能清理
         if (cacheSize > preloadCount * 2) {
             preloadLog("缓存超过限制，触发智能清理");
@@ -1201,8 +1170,6 @@ function preloadChaptersBatch(chapters, index) {
         
         // 更新目录显示（如果目录正在显示）
         updateChapterListStyle();
-        // 保存阅读进度（可选）
-        //saveReadProcess(chapterIndex - 1, bookUrl);
         // 预加载完成后检查内存
         clearMemory();
     } else {
@@ -1212,8 +1179,8 @@ function preloadChaptersBatch(chapters, index) {
     }
 }
 
- // 更新目录中章节的样式
- function updateChapterListStyle() {
+// 更新目录中章节的样式
+function updateChapterListStyle() {
     var chapterButtons = document.querySelectorAll(".chapterName");
     
     for (var i = 0; i < chapterButtons.length; i++) {
@@ -1407,19 +1374,26 @@ function saveReadProcess(targetChapterIndex, bookUrl, forceSave) {
         });
     }
 }
+
+// 处理保存进度响应
 function handleSaveProgressResponse(res, targetChapterIndex, saveTime) {
     if (res && res.isSuccess) {
         var elapsed = Date.now() - saveTime;
         preloadLog("进度保存成功，章节:" + targetChapterIndex + 
                   ", 耗时:" + elapsed + "ms");
+        
+        // 更新本地记录的当前章节索引
         currentChapterIndex = targetChapterIndex;
     } else {
         errorLog("进度保存失败: " + (res ? res.errorMsg : "未知错误"));
     }
-            loadingOver();
+    loadingOver();
 }
+
+// 同步保存进度（用于页面卸载等关键场景）
 function saveReadProcessSync(targetChapterIndex, bookUrl) {
     if (!targetChapterIndex || !bookUrl) return;
+    
     var xhr = new XMLHttpRequest();
     var params = {
         index: targetChapterIndex,
@@ -1435,7 +1409,7 @@ function saveReadProcessSync(targetChapterIndex, bookUrl) {
     xhr.open('POST', urlStr, false); // 同步请求
     xhr.setRequestHeader('Content-Type', 'application/json;charset=utf-8');
     
-    if (config.type == "server") {
+    if (config.type == "multi") {
         xhr.withCredentials = true;
     }
     
@@ -1637,11 +1611,9 @@ function calculateCharsPerPage(bookStr) {
         var pageRatio = currentBookPage / currentBookTotalPage;
         
         if (lastPageTurnDirection === -1 && pageRatio < 1/4 && currentChapterIndex > 0) {
-            // 向上翻页且接近章节开头，预加载前序章节
             preloadLog("接近章节开头，预加载前序章节");
             startPreloadChapters(1, -1); // 预加载前面1章
         } else if (lastPageTurnDirection === 1 && pageRatio > 3/4 && currentChapterIndex < bookChapterMapCache.length - 1) {
-            // 向下翻页且接近章节末尾，预加载后续章节
             preloadLog("接近章节末尾，预加载后续章节");
             startPreloadChapters(1, 1); // 预加载后面1章
         }
@@ -1708,7 +1680,7 @@ function createSourceButton(sourceInfo, index) {
     button.value = sourceInfo.bookUrl;
     button.setAttribute('data-index', index);
     
-    // 优化显示文本
+    // 显示文本
     var displayText = "书源" + (index + 1);
     if (sourceInfo.originName) {
         var originName = sourceInfo.originName;
@@ -1728,7 +1700,7 @@ function createSourceButton(sourceInfo, index) {
     return button;
 }
 
-// 动态更新书源样式，添加这个函数
+// 动态更新书源样式
 function updateSourceListStyle() {
     var sourceButtons = document.querySelectorAll(".sourceName");
     
@@ -1737,7 +1709,6 @@ function updateSourceListStyle() {
         var sourceIndex = parseInt(button.getAttribute('data-index'));
         var sourceInfo = bookSourceMapCache[sourceIndex];
         
-        // 更新当前书源样式
         button.classList.remove("modal-current");
         if (sourceInfo && sourceInfo.bookUrl == currentBookUrl && sourceInfo.origin == currentSourceUrl) {
             button.classList.add("modal-current");
@@ -1750,7 +1721,7 @@ function updateSourcePageInfo() {
     preloadLog("当前书源页码: " + currentSourcePage + "/" + totalSourcePages);
 }
 
-// 处理书源列表响应（分页版本）
+// 处理书源列表响应
 function handleSourceListResponse(res, pageNo, pageSize) {
     if (res && res.isSuccess) {
         bookSourceMapCache = bookSourceMapCache.concat(res.data.list);
@@ -1804,7 +1775,7 @@ function getSourceList(pageNo, pageSize, refresh) {
     }
 }
 
-// 书源列表处理函数（分页版本）
+// 书源列表处理函数
 function disposeSourceList(data, pageNo, pageSize) {
     if (!data || !data.length) {
         sourceColumn1.innerHTML = '<p style="text-align:center;padding:20px;font-size:43px;">暂无书源</p>';
@@ -2276,8 +2247,8 @@ function initBookShelf() {
         accessToken = "app";
         hide('.serverSecured');
         getBookshelf();
-    } else if (config.type == "serverNoSecured") {
-        accessToken = "serverNoSecured";
+    } else if (config.type == "single") {
+        accessToken = "single";
         hide('.serverSecured');
         getBookshelf();
     } else {
@@ -2356,7 +2327,6 @@ function initEventListeners() {
             jumpChapterList(1);
         });
     }
-    
     // 更多书源按钮
     var moreSourceBtn = document.querySelector('[data-action="getSourceList"]');
     if (moreSourceBtn) {
@@ -2408,7 +2378,7 @@ function load() {
     initBookElement();
     // 应用默认字体设置
     applyFontSettings();
-    //初始化对话框CSS值
+    //初始化对话框值
     initCSSLoadValue();
     // 初始化对话框选项
     initPageOptions();
@@ -2440,22 +2410,111 @@ function checkLoginState() {
     }
 }
 
-function login() {
-    loadingP = $("#logining");
-    config.type = $("#type").value;
-    config.address = $("#address").value || location.host;
+// 检查全屏支持情况
+function isFullScreenSupported() {
+    var elem = document.documentElement;
+    return !!(
+        elem.requestFullscreen ||
+        elem.webkitRequestFullscreen ||
+        elem.mozRequestFullScreen ||
+        elem.msRequestFullscreen
+    );
+}
 
-    if (config.type == "app") {
+// 检查当前是否全屏
+function isInFullscreen() {
+    return !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+    );
+}
+
+function enterStandardFullscreen() {
+    var elem = document.documentElement;
+    
+    try {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        } else {
+            throw new Error('No fullscreen support');
+        }
+    } catch (e) {
+        enterKindleFullscreen();
+    }
+}
+
+function exitStandardFullscreen() {
+    if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.mozFullScreenElement && document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if (document.msFullscreenElement && document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+
+    // 恢复滚动位置
+    window.scrollTo(0, 0);
+}
+
+// 检测Kindle浏览器更精确的方法
+function isKindleBrowser() {
+    var ua = navigator.userAgent;
+    // 匹配Kindle设备特有的用户代理字符串
+    return (
+        ua.indexOf('Linux armv7l') !== -1 && 
+        ua.indexOf('AppleWebKit/534.26+') !== -1 &&
+        ua.indexOf('Safari/534.26+') !== -1
+    );
+}
+
+// Kindle专用全屏进入方法
+function enterKindleFullscreen() {
+}
+
+// Kindle专用全屏退出方法
+function exitKindleFullscreen() {
+}
+
+function enterFullscreen() {
+    if (isFullScreenSupported()) {
+        enterStandardFullscreen();
+    } else if (isKindleBrowser()) {
+        enterKindleFullscreen(); 
+    }
+}
+
+function exitFullscreen() {
+    if (isInFullscreen()) {
+        exitStandardFullscreen();
+    } else if (isKindleBrowser()) {
+        exitKindleFullscreen(); 
+    }
+}
+
+function loginBookshelf() {
+    var type = config.type;
+
+    if (type == "app") {// 手机应用模式
         accessToken = "app";
         hide('.serverSecured');
         getBookshelf();
         return;
-    } else if (config.type == "serverNoSecured") {
-        accessToken = "serverNoSecured";
+    } else if (type == "single") {// 单用户模式
+        accessToken = "single";
         hide('.serverSecured');
         getBookshelf();
         return;
-    } else if (config.type == "server") {
+    } else if (type == "multi") {// 多用户模式
         config.username = $("#username").value;
         config.password = $("#password").value;
 
@@ -2477,9 +2536,22 @@ function login() {
             }
             loadingOver();
         });
-    } else{
+    } else {
         alert('服务器类型设置失败！');
     }
+}
+
+function updateLoginConfig(){
+    loadingP = $("#logining");
+    config.type = $("#type").value;
+    config.address = $("#address").value || location.host;
+}
+
+function login() {
+    // 页面值获取
+    updateLoginConfig();
+    // 登录书架
+    loginBookshelf();
 }
 
 function cleanupTimers() {
@@ -2506,7 +2578,7 @@ function cleanupMapCache() {
     
     // 限制封面缓存大小
     var coverKeys = Object.keys(lazyLoadedCovers);
-    if (coverKeys.length > 50) { // 限制50个封面缓存
+    if (coverKeys.length > lazyLoadedCovers * 10) { // 限制封面缓存
         var coversToDelete = coverKeys.slice(0, coverKeys.length - 30);
         for (var j = 0; j < coversToDelete.length; j++) {
             var coverKey = coversToDelete[j];
@@ -2525,7 +2597,7 @@ function cleanupMapCache() {
 }
 
 function sendLogoutRequest() {
-    if (config.type == "server" || config.type == "serverNoSecured") {
+    if (config.type == "multi" || config.type == "single") {
         HttpPost(url(logout_url), null, function() {
             loadingOver();
         });
@@ -2544,16 +2616,18 @@ function sendsaveReadRequest() {
 function logout() {
     // 退出前保存当前阅读进度
     sendsaveReadRequest();
-    // 1. 立即停止所有定时器和异步操作
+    // 立即停止所有定时器和异步操作
     cleanupTimers();
     cleanupLazyLoad();
-    // 2. 重置界面状态
+    // 重置界面状态
     initCSSLoadStyle();
-    // 3. 发送注销请求并清除本地认证
+    // 发送注销请求并清除本地认证
     sendLogoutRequest();
-    // 4. 清理数据缓存
+    // 清理数据缓存
     cleanupMapCache();
-    // 5. 显示登录界面
+    // 退出全屏
+    exitFullscreen();
+    // 显示登录界面
     show(".c_login");
     
     // 注意：保持事件监听器活跃，确保登录界面功能正常
@@ -2564,6 +2638,7 @@ function logout() {
 document.addEventListener('DOMContentLoaded', function() {
     // 完整兼容性检查（调试用）
     //checkKindleCompatibility();
+    //debugBrowserInfo();
     // 加载应用
     load();
 });

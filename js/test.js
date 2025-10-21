@@ -134,9 +134,58 @@ function checkKindleCompatibility() {
     };
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    // 完整兼容性检查（调试用）
-    //checkKindleCompatibility();
-    // 加载应用
-    load();
-});
+// 调试函数：显示浏览器信息（使用alert）
+function debugBrowserInfo() {
+    var info = [
+        '=== 浏览器信息 ===',
+        '用户代理: ' + navigator.userAgent,
+        '屏幕尺寸: ' + screen.width + 'x' + screen.height,
+        '视口尺寸: ' + window.innerWidth + 'x' + window.innerHeight,
+        'Kindle检测: ' + (isKindleBrowser() ? '是' : '否'),
+        '全屏支持: ' + (isFullScreenSupported() ? '是' : '否'),
+        '当前全屏: ' + (isInFullscreen() ? '是' : '否'),
+        '================='
+    ].join('\n');
+    
+    alert(info);
+}
+
+/**
+ * 获取缓存状态信息（新增函数，用于调试）
+ */
+function getCacheStatus() {
+    var cacheKeys = Object.keys(preloadedChaptersMapCache);
+    var currentIndex = currentChapterIndex || 0;
+    var nearbyChapters = [];
+    var farChapters = [];
+    for (var i = 0; i < cacheKeys.length; i++) {
+        var chapterIndex = parseInt(cacheKeys[i]);
+        var distance = Math.abs(chapterIndex - currentIndex);
+        if (distance <= preloadCount) {
+            nearbyChapters.push(chapterIndex);
+        } else {
+            farChapters.push(chapterIndex);
+        }
+    }
+    nearbyChapters.sort(function(a, b) { return a - b; });
+    farChapters.sort(function(a, b) { return a - b; });
+    return {
+        total: cacheKeys.length,
+        nearby: nearbyChapters,
+        far: farChapters,
+        memoryUsage: estimateCacheMemoryUsage() + 'KB',
+        currentChapter: currentIndex
+    };
+}
+
+// 调试函数：在控制台显示缓存状态
+function debugCacheStatus() {
+    var status = getCacheStatus();
+    console.group('预加载缓存状态');
+    preloadLog('总缓存章节:', status.total);
+    preloadLog('附近章节:', status.nearby);
+    preloadLog('较远章节:', status.far);
+    preloadLog('内存使用:', status.memoryUsage);
+    preloadLog('当前章节:', status.currentChapter);
+    console.groupEnd();
+}
