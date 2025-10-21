@@ -609,13 +609,13 @@ label {
     overflow: auto; /* 如果需要启用滚动 */
     background-color: rgb(0,0,0); /* 后备颜色 */
     background-color: rgba(0,0,0,0.4); /* #000 w/ opacity */
-    margin-left: 15px;
+    margin-left: 5px;
 }
 
 /* 模态内容 */
 .modal-content {
-    width: 85%;
-    max-height: 85%;
+    width: 90%;
+    max-height: 95%;
     display: block;
     background-color: #FFF;
     padding: 20px 30px 15px; /* 调整底部内边距为15px */

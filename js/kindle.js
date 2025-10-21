@@ -299,6 +299,7 @@ function preloadLog(message, data) {
 
 // 错误日志（始终记录）
 function errorLog(message) {
+    if (!config.debugMode) return;
     if (console && console.error) {
         console.error(message);
     }
@@ -1421,15 +1422,6 @@ function saveReadProcessSync(targetChapterIndex, bookUrl) {
     }
 }
 
-// 检查是否在章节的关键位置（开头1/4或结尾3/4）
-function isAtKeyPosition() {
-    if (!currentBookTotalPage || currentBookTotalPage <= 1) return false;
-    
-    var pageRatio = currentBookPage / currentBookTotalPage;
-    // 章节开头1/4范围内或结尾3/4范围内
-    return pageRatio <= 0.25 || pageRatio >= 0.75;
-}
-
 // 使用隐藏的div测量文本高度
 function textMeasurerHigh(text) {
     if (!textMeasurer) return 0;
@@ -1521,13 +1513,6 @@ function calculateCharsPerPage(bookStr) {
 // 获取书籍内容页面
  function getBookContentPage(targetChapterIndex, bookUrl, pageNo, lastPage) {
     freshTime();
-
-    // 检查是否在章节的关键位置（开头1/4或结尾3/4）并保存进度
-    if (currentChapterIndex === targetChapterIndex && isAtKeyPosition()) {
-        preloadLog("在章节关键位置，保存进度，页码:" + currentBookPage + "/" + currentBookTotalPage);
-        saveReadProcess(targetChapterIndex, bookUrl, false);
-    }
-
     // 优先检查预加载缓存
     var preloadedContent = getPreloadedContent(targetChapterIndex);
     if (preloadedContent && targetChapterIndex !== currentChapterIndex) {
@@ -1543,7 +1528,8 @@ function calculateCharsPerPage(bookStr) {
             showContent(pageList);
             show(".menu");
             loadingOver();
-            
+            // 确保进度保存
+            saveReadProcess(targetChapterIndex, bookUrl, true);
             setTimeout(function() {
                     clearMemory();
                     //debugCacheStatus();
@@ -1929,12 +1915,17 @@ function initCSSLoadValue() {
             
 // 统一的键盘点击事件处理
 function initKindleEnterKey() {
-    document.addEventListener('keypress', function(event) {
+    document.addEventListener('keydown', function(event) {
         var keyCode = event.which || event.keyCode;
-        
         if (keyCode === 13) { // 回车键
             handleEnterKey();
-            event.preventDefault(); // 阻止默认行为
+            event.preventDefault();
+        } else if (keyCode === 37) { // 向左键
+            prePage();
+            event.preventDefault();
+        } else if (keyCode === 39) { // 向右键
+            nextPage();
+            event.preventDefault();
         }
     });
 }
