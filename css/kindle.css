@@ -881,7 +881,7 @@ label {
 }
 
 .btn-primary {
-    width: 50%; /* 按钮宽度 */
+    width: 100%; /* 按钮宽度 */
     background-color: #000;
     color: #FFF;
     border: none;
