@@ -10,7 +10,7 @@ var config = window.READER_CONFIG || {
     fontFamily: "system",
     fontWeight: "normal",
     letterSpacing: 7,
-    menuFontSizeRatio: 0.6,
+    menuFontSizeRatio: 0.5,
     currentClickFunNum: 4,
     debugMode: false,
     debugLevel: 0
