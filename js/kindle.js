@@ -53,7 +53,7 @@ var showChapterListNum = 18,             // 目录显示的数量
     currentSourcePage = 1,               // 当前书源页码
     totalSourcePages = 1,                // 书源总页数
     sourcePageSize = 10,                 // 每页显示书源数量
-    preloadCount = 12,                   // 最大预加载章节数，显示数目一半
+    preloadCount = 18,                   // 最大预加载章节数，显示数目一半
     preloadedChaptersMapCache = {},      // 预加载缓存对象 - 存储已预加载的章节索引和内容 
     preloadTimer = null,                 // 限制预加载频率和数量
     lastPageTurnDirection = 0,           // 0=管理, 1=向下翻页, -1=向上翻页
@@ -711,7 +711,7 @@ function loadCoverImage(img, retryCount) {
                 if (img.parentNode) {
                     loadCoverImage(img, retryCount + 1);
                 }
-            }, 1000);
+            }, 500);
         } else {
             // 最终失败处理
             preloadLog('封面加载最终失败，使用默认图片: ' + dataSrc);
@@ -882,7 +882,7 @@ function handleChapterClick(target) {
                 // 章节切换后启动预加载
                 setTimeout(function() {
                     startPreloadChapters(1, 1);
-                    setTimeout(clearMemory, 1000);
+                    setTimeout(clearMemory, 500);
                 }, 100);
             });
             delete preloadedChaptersMapCache[chapterIndex];
@@ -892,7 +892,7 @@ function handleChapterClick(target) {
             // 章节切换后启动预加载
             setTimeout(function() {
                 startPreloadChapters(1, 1);
-                setTimeout(clearMemory, 1000);
+                setTimeout(clearMemory, 500);
             }, 100);
         }
     }
@@ -1088,7 +1088,7 @@ function startPreloadChapters(count, startOffset) {
         if (chaptersToPreload.length > 0) {
         preloadChaptersBatch(chaptersToPreload, 0);
         }
-    }, 200);
+    }, 100);
 }
 
 // 分批预加载章节（内部实现）
@@ -1125,7 +1125,7 @@ function preloadChaptersBatch(chapters, index) {
                 preloadChaptersBatch(chapters, index + 1);
             });
         }
-    }, index * 200); // 每章间隔200ms
+    }, index * 100); // 每章间隔100ms
 }
 
 // 估算缓存内存使用量
@@ -1533,7 +1533,7 @@ function calculateCharsPerPage(bookStr) {
             setTimeout(function() {
                     clearMemory();
                     //debugCacheStatus();
-                }, 1000);
+                }, 500);
         });
         // 从预加载缓存中移除
         delete preloadedChaptersMapCache[targetChapterIndex];
@@ -1558,7 +1558,7 @@ function calculateCharsPerPage(bookStr) {
             setTimeout(function() {
                     clearMemory();
                     //debugCacheStatus();
-                }, 1000);
+                }, 500);
         });
         return;
     }
