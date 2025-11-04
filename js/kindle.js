@@ -48,12 +48,12 @@ var screenWidth = window.screen.width,    // 屏幕宽度
     currentAuthor = "",                   // 当前书籍作者
     menusVisible = false;                 // 顶部和底部菜单显示状态
 // 性能优化配置
-var showChapterListNum = 18,             // 目录显示的数量
+var showChapterListNum = 16,             // 目录显示的数量
     showSourceListNum = 10,              // 书源显示的数量
     currentSourcePage = 1,               // 当前书源页码
     totalSourcePages = 1,                // 书源总页数
     sourcePageSize = 10,                 // 每页显示书源数量
-    preloadCount = 18,                   // 最大预加载章节数，显示数目一半
+    preloadCount = 16,                   // 最大预加载章节数，显示数目一半
     preloadedChaptersMapCache = {},      // 预加载缓存对象 - 存储已预加载的章节索引和内容 
     preloadTimer = null,                 // 限制预加载频率和数量
     lastPageTurnDirection = 0,           // 0=管理, 1=向下翻页, -1=向上翻页
@@ -2632,4 +2632,5 @@ document.addEventListener('DOMContentLoaded', function() {
     //debugBrowserInfo();
     // 加载应用
     load();
+
 });
