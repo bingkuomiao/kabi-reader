@@ -673,7 +673,7 @@ label {
     border: none;
     background: #e0e0e0;
     font-size: 43px;
-    color: #444;
+    color: #585656;
     cursor: pointer;
     padding: 3px 5px;
     margin: 5px 0;
@@ -689,7 +689,7 @@ label {
 
 /* 通用按钮状态样式 */
 .modal-preloaded {
-    background-color: #444 !important;
+    background-color: #585656 !important;
     color: #FFF !important;
     border: 1px solid #000 !important;
 }
@@ -905,3 +905,4 @@ input {
     height: 45px;
     font-size: 28px;
 }
+
